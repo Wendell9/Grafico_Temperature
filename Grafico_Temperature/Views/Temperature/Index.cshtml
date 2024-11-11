@@ -1,0 +1,28 @@
+﻿@model TemperatureGraphViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Data</title>
+
+    <!-- Adiciona o Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- Adiciona o jQuery antes de qualquer código que o utilize -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Temperature Data</h1>
+
+    <div>
+        <h3>Average Temperature: @Model.AverageTemperature °C</h3>
+    </div>
+
+    <!-- Renderiza a partial view do gráfico -->
+    @await Html.PartialAsync("~/Views/Temperature/pvGraficoTemperatura.cshtml", Model)
+</body>
+</html>
+
+
