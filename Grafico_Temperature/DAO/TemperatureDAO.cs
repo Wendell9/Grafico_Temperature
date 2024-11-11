@@ -7,7 +7,9 @@ using Newtonsoft.Json;
 
 public class TemperatureDAO
 {
-	private readonly string _apiUrl = "http://191.235.241.244:8666/STH/v1/contextEntities/type/Temp/id/urn:ngsi-ld:Temp:001/attributes/temperature?lastN=4"; // URL da sua API
+	private static string IP = "191.235.241.244:8666";
+	private static string numeroDeTemperturas = "4";
+    private readonly string _apiUrl = $"http://{IP}/STH/v1/contextEntities/type/Temp/id/urn:ngsi-ld:Temp:001/attributes/temperature?lastN={numeroDeTemperturas}"; // URL da sua API
 	private readonly HttpClient _httpClient;
 
 	public TemperatureDAO()

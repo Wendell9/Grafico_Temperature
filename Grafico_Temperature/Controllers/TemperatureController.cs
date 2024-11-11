@@ -49,13 +49,11 @@ public class TemperatureController : Controller
 		// Preenche o ViewModel diretamente no Controller
 		temperatures = temperatureData.Select(t => t.Temperature).ToList();
 		timestamps = temperatureData.Select(t => t.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")).ToList();
-		var avgtemperature = temperatures.Average();
 
 		return Json(new
 		{
 			Timestamps = timestamps,
-			Temperatures = temperatures,
-			AverageTemperature = avgtemperature
+			Temperatures = temperatures
 		});
 	}
 }
