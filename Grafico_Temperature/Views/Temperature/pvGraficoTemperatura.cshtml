@@ -1,67 +1,70 @@
 ﻿@model TemperatureGraphViewModel
 
-<div id="temperature-graph" style="width: 100%; height: 500px;"></div>
+<div id="temperature-graph">
 
-<script>
-    // Variáveis para armazenar dados acumulados globalmente
-    var temperaturaAcumulada = [];
-    var timestampsAcumuladas = [];
+	<script>
+		// Variáveis para armazenar dados acumulados globalmente
+		var temperaturaAcumulada = [];
+		var timestampsAcumuladas = [];
 
-    // Função para calcular a média das temperaturas
-    function calcularMedia(temperaturas) {
-        const soma = temperaturas.reduce((acc, curr) => acc + curr, 0);
-        return soma / temperaturas.length;
-    }
+		// Função para calcular a média das temperaturas
+		function calcularMedia(temperaturas) {
+			const soma = temperaturas.reduce((acc, curr) => acc + curr, 0);
+			return soma / temperaturas.length;
+		}
 
-    // Função para desenhar o gráfico de temperatura
-    function drawTemperatureGraph(timestamps, temperatures) {
-        var trace = {
-            x: timestamps,
-            y: temperatures,
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: 'Temperature',
-            line: { color: 'orange' }
-        };
+		// Função para desenhar o gráfico de temperatura
+		function drawTemperatureGraph(timestamps, temperatures) {
+			var trace = {
+				x: timestamps,
+				y: temperatures,
+				type: 'scatter',
+				mode: 'lines+markers',
+				name: 'Temperature',
+				line: { color: 'orange' }
+			};
 
-        var layout = {
-            title: 'Temperature Over Time',
-            xaxis: { title: 'Timestamp' },
-            yaxis: { title: 'Temperature (°C)' },
-        };
+			var layout = {
+				title: 'Temperature Over Time',
+				xaxis: { title: 'Timestamp' },
+				yaxis: { title: 'Temperature (°C)' },
+				width: 1000, // Defina a largura desejada
+				height: 700 // Defina a altura desejada
+			};
 
-        var data = [trace];
+			var data = [trace];
 
-        // Desenha o gráfico
-        Plotly.newPlot('temperature-graph', data, layout);
-    }
+			// Desenha o gráfico
+			Plotly.newPlot('temperature-graph', data, layout);
+		}
 
-    // Função para obter dados atualizados e redesenhar o gráfico
-    function updateGraph() {
-        fetch('/Temperature/GetTemperatureData')
-            .then(response => response.json())
-            .then(data => {
-                console.log("Dados recebidos:", data); // Verifica o que está sendo retornado
+		// Função para obter dados atualizados e redesenhar o gráfico
+		function updateGraph() {
+			fetch('/Temperature/GetTemperatureData')
+				.then(response => response.json())
+				.then(data => {
+					console.log("Dados recebidos:", data); // Verifica o que está sendo retornado
 
-                // Acumula novos dados
-                temperaturaAcumulada = temperaturaAcumulada.concat(data.temperatures);
-                timestampsAcumuladas = timestampsAcumuladas.concat(data.timestamps.map(ts => new Date(ts)));
+					// Acumula novos dados
+					temperaturaAcumulada = temperaturaAcumulada.concat(data.temperatures);
+					timestampsAcumuladas = timestampsAcumuladas.concat(data.timestamps.map(ts => new Date(ts)));
 
-                // Calcular a média das temperaturas acumuladas
-                const mediaTemperatura = calcularMedia(temperaturaAcumulada);
+					// Calcular a média das temperaturas acumuladas
+					const mediaTemperatura = calcularMedia(temperaturaAcumulada);
 
-                // Exibir a média na página
-                document.querySelector("h3").textContent = `Average Temperature: ${mediaTemperatura.toFixed(2)} °C`;
+					// Exibir a média na página
+					document.querySelector("#avgTemperature").textContent = `${mediaTemperatura.toFixed(2)} °C`;
 
-                // Redesenha o gráfico com os dados acumulados
-                drawTemperatureGraph(timestampsAcumuladas, temperaturaAcumulada);
-            })
-            .catch(error => console.error("Erro ao obter dados:", error));
-    }
+					// Redesenha o gráfico com os dados acumulados
+					drawTemperatureGraph(timestampsAcumuladas, temperaturaAcumulada);
+				})
+				.catch(error => console.error("Erro ao obter dados:", error));
+		}
 
-    // Chamada inicial para desenhar o gráfico
-    updateGraph();
+		// Chamada inicial para desenhar o gráfico
+		updateGraph();
 
-    // Atualiza o gráfico a cada 60 segundos
-    setInterval(updateGraph, 60000);
-</script>
+		// Atualiza o gráfico a cada 60 segundos
+		setInterval(updateGraph, 60000);
+	</script>
+</div>

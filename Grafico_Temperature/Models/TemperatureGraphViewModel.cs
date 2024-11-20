@@ -5,6 +5,7 @@
 		public List<double> Temperatures { get; set; }
 		public List<string> Timestamps { get; set; }
 		public double AverageTemperature { get; set; }
+		public double LastTemperature { get; set; }
 
 		public TemperatureGraphViewModel()
 		{

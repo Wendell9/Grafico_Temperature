@@ -3,26 +3,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Data</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Temperature Data</title>
 
-    <!-- Adiciona o Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<!-- Adiciona o Plotly.js -->
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <!-- Adiciona o jQuery antes de qualquer código que o utilize -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- Adiciona o jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="css/StyleSheetGraphic.css">
+
 </head>
 <body>
-    <h1>Temperature Data</h1>
+	<h1>Temperature Data</h1>
 
-    <div>
-        <h3>Average Temperature: @Model.AverageTemperature °C</h3>
-    </div>
+	<div class="container">
+		<!-- Seção do Gráfico -->
+		<div class="graph-section">
+			<!-- Renderiza o gráfico dentro da div com id 'temperatureGraph' -->
+			<!-- Renderiza a partial view do gráfico -->
+			@await Html.PartialAsync("~/Views/Temperature/pvGraficoTemperatura.cshtml", Model)
 
-    <!-- Renderiza a partial view do gráfico -->
-    @await Html.PartialAsync("~/Views/Temperature/pvGraficoTemperatura.cshtml", Model)
+			<script>
+				function updateLastTemperature() {
+					$.ajax({
+						url: '/Temperature/GetLastTemperature', // URL para a Action do Controller
+						method: 'GET',
+						success: function (data) {
+							if (data.temperature !== undefined) {
+								// Atualiza o conteúdo do card
+								$('#lastTemperature').text(data.temperature + " °C");
+							} else {
+								console.error('Erro: Resposta inesperada da API.');
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error('Erro ao obter a temperatura:', error);
+						}
+					});
+				}
+
+				// Chama a função de atualização a cada 60 segundos (60000ms)
+				setInterval(updateLastTemperature, 60000);
+
+				// Atualiza imediatamente ao carregar a página
+				updateLastTemperature();
+			</script>
+		</div>
+
+		<div class="right-section">
+			<!-- Seção dos Cards -->
+			<div class="cards-section">
+				<!-- Card para a Temperatura Média -->
+				<div class="card">
+					<h3>Average Temperature</h3>
+					<p id="avgTemperature">@Model.AverageTemperature °C</p>
+				</div>
+
+				<!-- Card para a Temperatura Mais Recente -->
+				<div class="card">
+					<h3>Recent Temperature</h3>
+					<p id="lastTemperature">@Model.LastTemperature °C</p>
+				</div>
+			</div>
+			<button class="btn" onclick="clicarBotao()">Iniciar medida</button>
+		</div>
+	</div>
 </body>
 </html>
-
-

@@ -26,6 +26,7 @@ public class TemperatureController : Controller
             viewModel.Temperatures = temperatureData.Select(t => t.Temperature).ToList();
             viewModel.Timestamps = temperatureData.Select(t => t.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")).ToList();
             viewModel.AverageTemperature = viewModel.Temperatures.Average();
+            viewModel.LastTemperature = await _temperatureDAO.GetLastTemperature();
 
             return View(viewModel); // Passa o ViewModel para a View
         }

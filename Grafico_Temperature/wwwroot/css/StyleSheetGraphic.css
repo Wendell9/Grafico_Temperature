@@ -1,0 +1,97 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: #4CAF50;
+}
+
+/* Container geral para o layout */
+/* Container geral para o layout */
+.container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15%; /* Espaçamento entre os itens */
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%; /* Certifica-se de que o contêiner ocupe 100% da largura disponível */
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total do contêiner */
+}
+
+/* Seção do gráfico */
+.graph-section {
+    flex: 1; /* Permite que o gráfico ocupe o restante do espaço disponível */
+    max-width: 70%; /* Define um limite máximo para a largura do gráfico */
+    padding: 20px;
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4CAF50; /* Verde */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn:hover {
+        background-color: #45a049; /* Tom mais escuro no hover */
+    }
+
+    .btn:active {
+        background-color: #3e8e41; /* Tom mais escuro ao clicar */
+    }
+
+.right-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+/* Cards para temperaturas */
+.cards-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%; /* Define um limite máximo para a largura dos cards */
+    padding: 20px;
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+
+/* Responsividade para telas pequenas */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px; /* Ajusta o espaçamento para telas menores */
+    }
+
+    .graph-section, .cards-section {
+        max-width: 100%;
+        flex: 1 1 100%;
+    }
+}
