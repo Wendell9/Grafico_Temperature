@@ -7,6 +7,8 @@
 		public double AverageTemperature { get; set; }
 		public double LastTemperature { get; set; }
 
+		public double SetPoint {  get; set; }
+
 		public TemperatureGraphViewModel()
 		{
 			Temperatures = new List<double>();

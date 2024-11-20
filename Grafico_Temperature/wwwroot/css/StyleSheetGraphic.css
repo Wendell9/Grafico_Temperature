@@ -7,6 +7,15 @@
     line-height: 1.6;
 }
 
+main {
+    display: flex; /* Se você deseja que o main organize elementos com flexbox */
+    flex-direction: column; /* Alinha os filhos em coluna por padrão */
+    width: 100%; /* Garante que o main ocupe toda a largura */
+    box-sizing: border-box; /* Garante que padding não afete dimensões */
+    padding: 0; /* Remove espaçamentos indesejados */
+    margin: 0; /* Remove margens padrão */
+}
+
 h1 {
     text-align: center;
     margin: 20px 0;
@@ -25,13 +34,20 @@ h1 {
     box-sizing: border-box; /* Garante que o padding não aumente a largura total do contêiner */
 }
 
-/* Seção do gráfico */
 .graph-section {
-    flex: 1; /* Permite que o gráfico ocupe o restante do espaço disponível */
-    max-width: 70%; /* Define um limite máximo para a largura do gráfico */
+    display:flex;
+    flex: 0 0 80%; /* O espaço vazio ocupará 70% da largura do contêiner */
+    width: 70%; /* Limita a largura do gráfico a 70% do contêiner pai */
     padding: 20px;
-    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+    box-sizing: border-box; /* Inclui o padding na largura total */
+    height: 50vh; /* Ajusta a altura para 50% da altura da viewport */
 }
+#temperatureGraph{
+    width:100%;
+    height:100%;
+}
+
+
 
 .btn {
     display: inline-block;

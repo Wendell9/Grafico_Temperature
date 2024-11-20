@@ -1,4 +1,4 @@
-
+﻿@model TemperatureGraphViewModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,35 +20,8 @@
 	<div class="container">
 		<!-- Seção do Gráfico -->
 		<div class="graph-section">
-			<!-- Renderiza o gráfico dentro da div com id 'temperatureGraph' -->
-			<!-- Renderiza a partial view do gráfico -->
-			@await Html.PartialAsync("~/Views/Temperature/pvGraficoTemperatura.cshtml", Model)
-
-			<script>
-				function updateLastTemperature() {
-					$.ajax({
-						url: '/Temperature/GetLastTemperature', // URL para a Action do Controller
-						method: 'GET',
-						success: function (data) {
-							if (data.temperature !== undefined) {
-								// Atualiza o conteúdo do card
-								$('#lastTemperature').text(data.temperature + " °C");
-							} else {
-								console.error('Erro: Resposta inesperada da API.');
-							}
-						},
-						error: function (xhr, status, error) {
-							console.error('Erro ao obter a temperatura:', error);
-						}
-					});
-				}
-
-				// Chama a função de atualização a cada 60 segundos (60000ms)
-				setInterval(updateLastTemperature, 60000);
-
-				// Atualiza imediatamente ao carregar a página
-				updateLastTemperature();
-			</script>
+			<!-- O gráfico será renderizado aqui, mas inicialmente estará vazio -->
+			<div id="temperatureGraph"></div>
 		</div>
 
 		<div class="right-section">
@@ -66,8 +39,50 @@
 					<p id="lastTemperature">@Model.LastTemperature °C</p>
 				</div>
 			</div>
-			<button class="btn" onclick="clicarBotao()">Iniciar medida</button>
+			<div class="input-dados">
+				<label for="Set Point" class="control-label">Set Point</label>
+				<input type="number" Name="SetPoint" value="@Model.SetPoint" />
+				<button class="btn" id="startMeasurementButton">Iniciar medida</button>
+			</div>
 		</div>
 	</div>
+
+	<script>
+		$(document).ready(function () {
+			// Função que será chamada quando o botão for clicado
+			$('#startMeasurementButton').on('click', function () {
+				const $button = $(this); // Referência ao botão
+				const $input = $('input[name="SetPoint"]'); // Referência ao campo de entrada
+
+				// Alterna o estado do botão
+				if ($button.text() === 'Iniciar medida') {
+					// Estado: Iniciar
+					$button.text('Parar'); // Muda o texto do botão
+					$button.css('background-color', 'red'); // Muda a cor para vermelho
+					$input.prop('readonly', true); // Torna o input somente leitura
+					$input.prop('background-color', 'gray');
+
+					// Fazendo a requisição AJAX para renderizar a partial view
+					$.ajax({
+						url: '@Url.Action("RenderGraficoTemperatura", "Temperature")', // URL que vai renderizar a partial view
+						type: 'GET',
+						success: function (data) {
+							// Quando a requisição for bem-sucedida, insere a partial view renderizada na div
+							$('#temperatureGraph').html(data);
+						},
+						error: function (xhr, status, error) {
+							console.error('Erro ao carregar a partial view: ' + error);
+						}
+					});
+				} else {
+					// Estado: Parar
+					$button.text('Iniciar medida'); // Muda o texto de volta
+					$button.css('background-color', '#4CAF50'); // Volta à cor original (verde)
+					$input.prop('readonly', false); // Torna o input editável
+					$input.prop('background-color', 'white');
+				}
+			});
+		});
+	</script>
 </body>
 </html>

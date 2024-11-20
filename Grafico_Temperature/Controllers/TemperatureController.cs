@@ -25,8 +25,8 @@ public class TemperatureController : Controller
             var viewModel = new TemperatureGraphViewModel();
             viewModel.Temperatures = temperatureData.Select(t => t.Temperature).ToList();
             viewModel.Timestamps = temperatureData.Select(t => t.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")).ToList();
-            viewModel.AverageTemperature = viewModel.Temperatures.Average();
-            viewModel.LastTemperature = await _temperatureDAO.GetLastTemperature();
+            viewModel.AverageTemperature = 0.0;
+            viewModel.LastTemperature = 0.0;
 
             return View(viewModel); // Passa o ViewModel para a View
         }
@@ -50,11 +50,21 @@ public class TemperatureController : Controller
 		// Preenche o ViewModel diretamente no Controller
 		temperatures = temperatureData.Select(t => t.Temperature).ToList();
 		timestamps = temperatureData.Select(t => t.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")).ToList();
+        var lastTemperature = await _temperatureDAO.GetLastTemperature();
 
 		return Json(new
 		{
 			Timestamps = timestamps,
-			Temperatures = temperatures
+			Temperatures = temperatures,
+            Lasttemperature=lastTemperature
 		});
 	}
+
+		public IActionResult RenderGraficoTemperatura()
+		{
+			// Aqui, você passa o modelo necessário para a partial view
+			return PartialView("~/Views/Temperature/pvGraficoTemperatura.cshtml", new TemperatureGraphViewModel());
+		}
+	
+
 }
