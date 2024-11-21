@@ -2,88 +2,99 @@
 
 <div id="temperature-graph">
 
-	<script>
-		var chave = true;
-		// Variáveis para armazenar dados acumulados globalmente
-		var temperaturaAcumulada = [];
-		var timestampsAcumuladas = [];
+    <script>
+        // Variáveis para armazenar dados acumulados globalmente
+        var temperaturaAcumulada = [];
+        var timestampsAcumuladas = [];
 
-		// Função para calcular a média das temperaturas
-		function calcularMedia(temperaturas) {
-			const soma = temperaturas.reduce((acc, curr) => acc + curr, 0);
-			return soma / temperaturas.length;
-		}
+        // Função para calcular a média das temperaturas
+        function calcularMedia(temperaturas) {
+            const soma = temperaturas.reduce((acc, curr) => acc + curr, 0);
+            return soma / temperaturas.length;
+        }
 
-		// Função para desenhar o gráfico de temperatura
-		function drawTemperatureGraph(timestamps, temperatures) {
-			var trace = {
-				x: timestamps,
-				y: temperatures,
-				type: 'scatter',
-				mode: 'lines+markers',
-				name: 'Temperature',
-				line: { color: 'orange' }
-			};
+        // Função para desenhar o gráfico de temperatura
+        function drawTemperatureGraph(timestamps, temperatures) {
+            var trace = {
+                x: timestamps,
+                y: temperatures,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Temperature',
+                line: { color: 'orange' }
+            };
 
-			var layout = {
-				title: 'Temperature Over Time',
-				xaxis: { title: 'Timestamp' },
-				yaxis: { title: 'Temperature (°C)' },
-				width: 1000, // Defina a largura desejada
-				height: 700 // Defina a altura desejada
-			};
+            var trace2 = {
+                x: timestamps,
+                y: new Array(timestamps.length).fill(@Model.SetPoint), // Cria um array com todos os valores de Y iguais a 50
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Set Point',
+                line: { color: 'red', dash: 'solid' } // Define a linha como vermelha e sólida
+            };
 
-			var data = [trace];
+            var layout = {
+                title: 'Temperature Over Time',
+                xaxis: { title: 'Timestamp' },
+                yaxis: { title: 'Temperature (°C)' },
+                width: 1000, // Defina a largura desejada
+                height: 700 // Defina a altura desejada
+            };
 
-			// Desenha o gráfico
-			Plotly.newPlot('temperature-graph', data, layout);
-		}
+            var data = [trace, trace2];
 
-		// Função para obter dados atualizados e redesenhar o gráfico
-		function updateGraph() {
-			fetch('/Temperature/GetTemperatureData')
-				.then(response => response.json())
-				.then(data => {
-					console.log("Dados recebidos:", data); // Verifica o que está sendo retornado
+            // Desenha o gráfico
+            Plotly.newPlot('temperature-graph', data, layout);
+        }
 
-					// Acumula novos dados
-					temperaturaAcumulada = temperaturaAcumulada.concat(data.temperatures);
-					timestampsAcumuladas = timestampsAcumuladas.concat(data.timestamps.map(ts => new Date(ts)));
+        // Função para obter dados atualizados e redesenhar o gráfico
+        function updateGraph() {
+            fetch('/Temperature/GetTemperatureData')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Dados recebidos:", data); // Verifica o que está sendo retornado
 
-					ulltimatemperatura = data.lasttemperature;
+                    // Acumula novos dados
+                    temperaturaAcumulada = temperaturaAcumulada.concat(data.temperatures);
+                    timestampsAcumuladas = timestampsAcumuladas.concat(data.timestamps.map(ts => new Date(ts)));
 
-					// Calcular a média das temperaturas acumuladas
-					const mediaTemperatura = calcularMedia(temperaturaAcumulada);
+                    const ultimaTemperatura = data.lasttemperature;
 
-					// Exibir a média na página
-					document.querySelector("#avgTemperature").textContent = `${mediaTemperatura.toFixed(2)} °C`;
-					document.querySelector("#lastTemperature").textContent = `${ulltimatemperatura.toFixed(2)} °C`;
+                    // Calcular a média das temperaturas acumuladas
+                    const mediaTemperatura = calcularMedia(temperaturaAcumulada);
 
-					if (document.querySelector("#startMeasurementButton").textContent != "Parar") {
-						chave = false;
-						return;
-					}
-					else {
-						// Redesenha o gráfico com os dados acumulados
-						drawTemperatureGraph(timestampsAcumuladas, temperaturaAcumulada);
-					}
-				})
-				.catch(error => console.error("Erro ao obter dados:", error));
-		}
+                    // Exibir a média na página
+                    document.querySelector("#avgTemperature").textContent = `${mediaTemperatura.toFixed(2)} °C`;
+                    document.querySelector("#lastTemperature").textContent = `${ultimaTemperatura.toFixed(2)} °C`;
 
-		if (document.querySelector("#startMeasurementButton").textContent == "Parar")
-			chave = true;
-		else {
-			chave = false;
-		}
+                    // Redesenha o gráfico com os dados acumulados
+                    drawTemperatureGraph(timestampsAcumuladas, temperaturaAcumulada);
+                })
+                .catch(error => console.error("Erro ao obter dados:", error));
+        }
 
-		// Chamada inicial para desenhar o gráfico
-		updateGraph();
+        // Função que inicia o processo de coleta de dados e atualiza o gráfico
+        function startMeasurement() {
+            // Verifica o estado do botão de início
+            const startButtonText = document.querySelector("#startMeasurementButton").textContent;
+            if (startButtonText !== "Parar") {
+                return; // Se o texto do botão não for "Parar", o script não faz nada
+            }
 
-		if (chave) {
-			// Atualiza o gráfico a cada 60 segundos
-			setInterval(updateGraph, 15000);
-		}
+            // Inicia o processo de atualização do gráfico
+            updateGraph();
 
-	</script>
+            // Atualiza o gráfico a cada 15 segundos
+            setInterval(() => {
+                if (document.querySelector("#startMeasurementButton").textContent !== "Parar") {
+                    return; // Para as atualizações se o botão não for "Parar"
+                }
+                updateGraph();
+            }, 15000);
+        }
+
+        // Inicia a medição assim que o botão estiver com o texto "Parar"
+        startMeasurement();
+
+    </script>
 </div>
