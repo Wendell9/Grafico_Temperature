@@ -126,7 +126,7 @@ public class TemperatureDAO
 		{
 			var content = await response.Content.ReadAsStringAsync();
 			var data = JsonConvert.DeserializeObject<LastTemperatureAPIResponse>(content);
-			double temp = Convert.ToDouble(data.value);
+			double temp = Convert.ToDouble(data.value, System.Globalization.CultureInfo.InvariantCulture);
 			return temp;
 		}
 		else
@@ -143,7 +143,7 @@ public class TemperatureDAO
 		{
 			var temperature = new TemperatureViewModel
 			{
-				Temperature = Convert.ToDouble(value.AttrValue),
+				Temperature = Convert.ToDouble(value.AttrValue, System.Globalization.CultureInfo.InvariantCulture),
 				Timestamp = DateTime.Parse(value.RecvTime)
 			};
 			temperatureList.Add(temperature);

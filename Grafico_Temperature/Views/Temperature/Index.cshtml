@@ -17,28 +17,42 @@
 <body>
 	<h1>Temperature Data</h1>
 
-	<div class="container">
+	<div class="conteudo">
 		<!-- Seção do Gráfico -->
 		<div class="graph-section">
-			<!-- O gráfico será renderizado aqui, mas inicialmente estará vazio -->
-			<div id="temperatureGraph"></div>
 		</div>
 
 		<div class="right-section">
 			<!-- Seção dos Cards -->
 			<div class="cards-section">
-				<!-- Card para a Temperatura Média -->
-				<div class="card">
-					<h3>Average Temperature</h3>
-					<p id="avgTemperature">@Model.AverageTemperature °C</p>
-				</div>
+				<div class="column">
+					<!-- Card para a Temperatura Média -->
+					<div class="card">
+						<h3>Average Temperature</h3>
+						<p id="avgTemperature">@Model.AverageTemperature °C</p>
+					</div>
 
-				<!-- Card para a Temperatura Mais Recente -->
-				<div class="card">
-					<h3>Recent Temperature</h3>
-					<p id="lastTemperature">@Model.LastTemperature °C</p>
+					<!-- Card para a Temperatura Mais Recente -->
+					<div class="card">
+						<h3>Recent Temperature</h3>
+						<p id="lastTemperature">@Model.LastTemperature °C</p>
+					</div>
+				</div>
+				<!-- Coluna 2 -->
+				<div class="column">
+					<div class="card">
+						<h3>Max Temperature</h3>
+						<p id="max_temperature">0 °C</p>
+					</div>
+
+					<div class="card">
+						<h3>Min Temperature</h3>
+						<p id="min_temperature">0 °C</p>
+					</div>
 				</div>
 			</div>
+
+
 			<div class="input-dados">
 				<label for="Trigger" class="control-label">Trigger</label>
 				<input type="number" name="Trigger" value="0.0" />
@@ -49,12 +63,14 @@
 		</div>
 	</div>
 
+
 	<script>
 		$(document).ready(function () {
 			// Função que será chamada quando o botão for clicado
 			$('#startMeasurementButton').on('click', function () {
 				const $button = $(this); // Referência ao botão
 				const $input = $('input[name="SetPoint"]'); // Referência ao campo de entrada
+				const $trigger = $('input[name="Trigger"]');
 
 				// Alterna o estado do botão
 				if ($button.text() === 'Iniciar medida') {
@@ -62,7 +78,9 @@
 					$button.text('Parar'); // Muda o texto do botão
 					$button.css('background-color', 'red'); // Muda a cor para vermelho
 					$input.prop('readonly', true); // Torna o input somente leitura
+					$trigger.prop('readonly', true);
 					$('input[name="SetPoint"]').css('background-color', '#D3D3D3');
+					$('input[name="Trigger"]').css('background-color', '#D3D3D3');
 
 					var setPointValue = document.querySelector('[name="SetPoint"]').value;
 					var linkSetPoint = 'temperature/RenderGraficoTemperatura?setPoint=' + setPointValue;
@@ -73,7 +91,7 @@
 						type: 'GET',
 						success: function (data) {
 							// Quando a requisição for bem-sucedida, insere a partial view renderizada na div
-							$('#temperatureGraph').html(data);
+							$('.graph-section').html(data);
 						},
 						error: function (xhr, status, error) {
 							console.error('Erro ao carregar a partial view: ' + error);
@@ -85,6 +103,7 @@
 					$button.css('background-color', '#4CAF50'); // Volta à cor original (verde)
 					$input.prop('readonly', false); // Torna o input editável
 					$('input[name="SetPoint"]').css('background-color', 'white');
+					$('input[name="Trigger"]').css('background-color', 'white');
 				}
 			});
 		});

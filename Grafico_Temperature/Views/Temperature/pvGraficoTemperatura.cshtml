@@ -1,11 +1,13 @@
 ﻿@model TemperatureGraphViewModel
 
 <div id="temperature-graph">
-
 	<script>
 		// Variáveis para armazenar dados acumulados globalmente
 		var temperaturaAcumulada = [];
 		var timestampsAcumuladas = [];
+
+		var maiorTemperatura; 
+		var menorTemperatura;
 
 		// Função para calcular a média das temperaturas
 		function calcularMedia(temperaturas) {
@@ -33,12 +35,15 @@
 				line: { color: 'red', dash: 'solid' } // Define a linha como vermelha e sólida
 			};
 
+			var div = document.getElementById('temperature-graph');
+			var divDimensions = div.getBoundingClientRect();
+
 			var layout = {
 				title: 'Temperature Over Time',
 				xaxis: { title: 'Timestamp' },
 				yaxis: { title: 'Temperature (°C)' },
-				width: 1000, // Defina a largura desejada
-				height: 700 // Defina a altura desejada
+				width: divDimensions.width, // Usa a largura da div
+				height: divDimensions.height, // Usa a altura da div
 			};
 
 			var data = [trace, trace2];
@@ -78,6 +83,9 @@
 					console.log("Dados recebidos:", data); // Verifica o que está sendo retornado
 
 					const ultimaTemperatura = data.lasttemperature;
+
+					defineTemperaturasPico(ultimaTemperatura);
+
 					document.querySelector("#lastTemperature").textContent = `${ultimaTemperatura.toFixed(2)} °C`;
 				})
 				.catch(error => console.error("Erro ao obter dados:", error));
@@ -115,7 +123,26 @@
 			}, 15000); // Intervalo de 15 segundos
 		}
 
-		// Inicia a medição
+		function defineTemperaturasPico(valor) {
+			if (valor > maiorTemperatura) {
+				maiorTemperatura=valor
+			}
+
+			if (valor < menorTemperatura) {
+				menorTemperatura = valor
+			}
+
+			document.querySelector("#min_temperature").textContent = `${menorTemperatura.toFixed(2)} °C` 
+			document.querySelector("#max_temperature").textContent = `${maiorTemperatura.toFixed(2)} °C`
+		}
+
+		maiorTemperatura = Math.max(...temperaturaAcumulada)
+		menorTemperatura = Math.min(...temperaturaAcumulada)
+
+		document.querySelector("#min_temperature").textContent =menorTemperatura
+		document.querySelector("#max_temperature").textContent = maiorTemperatura
+
+			// Inicia a medição
 		startMeasurement();
 
 
