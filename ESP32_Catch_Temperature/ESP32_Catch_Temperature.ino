@@ -66,11 +66,18 @@ void setup() {
     MQTT.publish(TOPICO_PUBLISH_1, "s|on");
 }
 
+unsigned long previousMillis = 0;
+const long interval = 15000;  // intervalo de 15 segundos
+
 void loop() {
-    VerificaConexoesWiFIEMQTT();
+    unsigned long currentMillis = millis();
+    while(currentMillis - previousMillis<interval){
     EnviaEstadoOutputMQTT();
+    VerificaConexoesWiFIEMQTT();
+    MQTT.loop();
+    }
+    previousMillis=currentMillis;
     handleTemperature();
-    delay(15000);
     MQTT.loop();
 }
 

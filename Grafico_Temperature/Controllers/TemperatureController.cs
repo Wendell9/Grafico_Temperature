@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 public class TemperatureController : Controller
 {
 	private readonly TemperatureDAO _temperatureDAO;
-
 	public TemperatureController()
 	{
 		_temperatureDAO = new TemperatureDAO(); // Inicializa a classe DAO
+
 	}
 
 	// Método para obter os dados da API e passar para a View
@@ -50,12 +50,20 @@ public class TemperatureController : Controller
 		// Preenche o ViewModel diretamente no Controller
 		temperatures = temperatureData.Select(t => t.Temperature).ToList();
 		timestamps = temperatureData.Select(t => t.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")).ToList();
-		var lastTemperature = await _temperatureDAO.GetLastTemperature();
 
 		return Json(new
 		{
 			Timestamps = timestamps,
-			Temperatures = temperatures,
+			Temperatures = temperatures
+		});
+	}
+
+	public async Task<IActionResult> ColetaUltimaTemperatura(double trigger)
+	{
+		var lastTemperature = await _temperatureDAO.GetLastTemperature();
+		VerificaGatilho(Convert.ToDouble(lastTemperature),trigger);
+		return Json(new
+		{
 			Lasttemperature = lastTemperature
 		});
 	}
@@ -68,5 +76,24 @@ public class TemperatureController : Controller
 		return PartialView("~/Views/Temperature/pvGraficoTemperatura.cshtml", gr);
 	}
 
+	public async void VerificaGatilho(double teste, double TGatilho)
+	{
+		string status = await _temperatureDAO.GetLEDStatus();
 
+		if (teste > TGatilho)
+		{
+
+			if (status == "off")
+			{
+				await _temperatureDAO.SwitchLed("on");
+			}
+		}
+		else
+		{
+			if (status == "on")
+			{
+				await _temperatureDAO.SwitchLed("off");
+			}
+		}
+	}
 }

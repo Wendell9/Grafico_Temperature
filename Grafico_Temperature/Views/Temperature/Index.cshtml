@@ -40,6 +40,8 @@
 				</div>
 			</div>
 			<div class="input-dados">
+				<label for="Trigger" class="control-label">Trigger</label>
+				<input type="number" name="Trigger" value="0.0" />
 				<label for="Set Point" class="control-label">Set Point</label>
 				<input type="number" name="SetPoint" value="0.0" />
 				<button class="btn" id="startMeasurementButton">Iniciar medida</button>
@@ -64,7 +66,8 @@
 
 					var setPointValue = document.querySelector('[name="SetPoint"]').value;
 					var linkSetPoint = 'temperature/RenderGraficoTemperatura?setPoint=' + setPointValue;
-					// Fazendo a requisição AJAX para renderizar a partial view
+
+					// Requisição AJAX para RenderGraficoTemperatura
 					$.ajax({
 						url: linkSetPoint,  // Passando o setPoint como query string
 						type: 'GET',
@@ -86,5 +89,6 @@
 			});
 		});
 	</script>
+
 </body>
 </html>

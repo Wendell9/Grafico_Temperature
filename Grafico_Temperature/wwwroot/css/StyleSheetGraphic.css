@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
+    min-height: 100vh; /* Garante que o conteúdo ocupe no mínimo toda a altura da tela */
     color: #333;
     line-height: 1.6;
 }
@@ -29,22 +30,23 @@ h1 {
     justify-content: space-between;
     gap: 15%; /* Espaçamento entre os itens */
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 5px;
     width: 100%; /* Certifica-se de que o contêiner ocupe 100% da largura disponível */
     box-sizing: border-box; /* Garante que o padding não aumente a largura total do contêiner */
 }
 
 .graph-section {
-    display:flex;
+    display: flex;
     flex: 0 0 80%; /* O espaço vazio ocupará 70% da largura do contêiner */
     width: 70%; /* Limita a largura do gráfico a 70% do contêiner pai */
     padding: 20px;
     box-sizing: border-box; /* Inclui o padding na largura total */
     height: 50vh; /* Ajusta a altura para 50% da altura da viewport */
 }
-#temperatureGraph{
-    width:100%;
-    height:100%;
+
+#temperatureGraph {
+    width: 100%;
+    height: 100%;
 }
 
 
