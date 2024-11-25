@@ -5,6 +5,11 @@
 		// Variáveis para armazenar dados acumulados globalmente
 		var temperaturaAcumulada = [];
 		var timestampsAcumuladas = [];
+		var temperaturaRecente; 
+
+		var setPoint = @Model.SetPoint;
+
+		var temperaturasTeste = [];
 
 		var maiorTemperatura; 
 		var menorTemperatura;
@@ -59,9 +64,22 @@
 				.then(data => {
 					console.log("Dados recebidos:", data); // Verifica o que está sendo retornado
 
+
+					if (document.querySelector("#erro").textContent == "-- °C") {
+						verificaErro(data.temperatures);
+					}
+
 					// Acumula novos dados
 					temperaturaAcumulada = temperaturaAcumulada.concat(data.temperatures);
 					timestampsAcumuladas = timestampsAcumuladas.concat(data.timestamps.map(ts => new Date(ts)));
+
+					if (temperaturaAcumulada.length == 4) {
+						maiorTemperatura = Math.max(...temperaturaAcumulada)
+						menorTemperatura = Math.min(...temperaturaAcumulada)
+
+						document.querySelector("#min_temperature").textContent = menorTemperatura
+						document.querySelector("#max_temperature").textContent = maiorTemperatura
+					}
 
 					// Calcular a média das temperaturas acumuladas
 					const mediaTemperatura = calcularMedia(temperaturaAcumulada);
@@ -85,6 +103,8 @@
 					const ultimaTemperatura = data.lasttemperature;
 
 					defineTemperaturasPico(ultimaTemperatura);
+
+					temperaturaRecente = ultimaTemperatura;
 
 					document.querySelector("#lastTemperature").textContent = `${ultimaTemperatura.toFixed(2)} °C`;
 				})
@@ -135,16 +155,44 @@
 			document.querySelector("#min_temperature").textContent = `${menorTemperatura.toFixed(2)} °C` 
 			document.querySelector("#max_temperature").textContent = `${maiorTemperatura.toFixed(2)} °C`
 		}
-
-		maiorTemperatura = Math.max(...temperaturaAcumulada)
-		menorTemperatura = Math.min(...temperaturaAcumulada)
-
-		document.querySelector("#min_temperature").textContent =menorTemperatura
-		document.querySelector("#max_temperature").textContent = maiorTemperatura
-
 			// Inicia a medição
 		startMeasurement();
 
+		function verificaErro(temperaturas) {
+			// Inicializa o array temperaturasTeste se necessário
+			let temperaturasTeste = [];
 
+			// Adiciona as novas temperaturas ao array de teste
+			temperaturasTeste = temperaturasTeste.concat(temperaturas);
+
+			// Quando o array de teste atingir o tamanho esperado (4, neste caso)
+			if (temperaturasTeste.length == 4) {
+				let temperaturasString = '';
+
+				temperaturasTeste.forEach((temp, index) => {
+					if (index !== 0) {
+						temperaturasString += ','; // Adiciona vírgula antes de cada número, exceto o primeiro
+					}
+					temperaturasString += temp; // Adiciona o número à string
+				});
+
+				console.log('Valores de temperatura');
+				console.log(temperaturasString);
+
+				fetch(`/Temperature/VerificarEstabilizacao?temperaturasArray=${temperaturasString}`)
+					.then(response => response.json())
+					.then(data => {
+						console.log("Dados recebidos:", data);
+
+						// Supondo que o setPoint seja uma variável definida em algum lugar
+						let tempErro = setPoint - temperaturaRecente;
+						document.querySelector("#erro").textContent = `${tempErro.toFixed(2)} °C`;
+					})
+					.catch(error => console.error("Erro ao obter dados:", error));
+
+				// Limpar o array de temperaturas após o envio
+				temperaturasTeste = [];
+			}
+		}
 	</script>
 </div>

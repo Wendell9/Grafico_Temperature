@@ -34,8 +34,13 @@
 
 					<!-- Card para a Temperatura Mais Recente -->
 					<div class="card">
-						<h3>Recent Temperature</h3>
+						<h3>Current Temperature</h3>
 						<p id="lastTemperature">@Model.LastTemperature °C</p>
+					</div>
+
+					<div class="card">
+						<h3>Erro</h3>
+						<p id="erro">-- °C</p>
 					</div>
 				</div>
 				<!-- Coluna 2 -->
@@ -102,6 +107,7 @@
 					$button.text('Iniciar medida'); // Muda o texto de volta
 					$button.css('background-color', '#4CAF50'); // Volta à cor original (verde)
 					$input.prop('readonly', false); // Torna o input editável
+					$trigger.prop('readonly', false);
 					$('input[name="SetPoint"]').css('background-color', 'white');
 					$('input[name="Trigger"]').css('background-color', 'white');
 				}

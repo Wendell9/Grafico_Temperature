@@ -96,4 +96,28 @@ public class TemperatureController : Controller
 			}
 		}
 	}
+	public async Task<IActionResult> VerificarEstabilizacao(string temperaturasArray)
+	{
+		double[] temperaturas = temperaturasArray
+			.Split(',')
+			.Select(x => Convert.ToDouble(x, System.Globalization.CultureInfo.InvariantCulture))
+			.ToArray();
+
+		double tolerancia = 0.5;
+
+		// Calcula a variação máxima na janela
+		double variacaoMaxima = temperaturas.Max() - temperaturas.Min();
+
+		// Retorna verdadeiro se a variação máxima for menor ou igual à tolerância
+		if (variacaoMaxima <= tolerancia)
+		{
+			return Json(true);
+		}
+		else
+		{
+			return Json(false);
+		}
+	}
+
 }
+
